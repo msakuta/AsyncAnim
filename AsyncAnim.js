@@ -1,4 +1,4 @@
-Relativity = new (function(){
+AsyncAnim = new (function(){
 'use strict';
 var canvas;
 var width;
