@@ -3,6 +3,7 @@ AsyncAnim = new (function(){
 var canvas;
 var width;
 var height;
+var animImages = [];
 
 window.addEventListener('load', function() {
 	var asyncCheck = document.getElementById("asyncCheck");
@@ -33,13 +34,18 @@ window.addEventListener('load', function() {
 	width = parseInt(canvas.style.width);
 	height = parseInt(canvas.style.height);
 
+	for(var i = 0; i < 4; i++){
+		animImages[i] = new Image();
+		animImages[i].src = "assets/anim_000" + i + ".png";
+	}
+
 	draw();
 
 	// Animate (framerate could be subject to discuss)
 	window.setInterval(timerProc, 50);
 });
 
-var taskWait = 10;
+var taskWait = 8;
 var multithread = false;
 var asynch = false;
 var ballThrows = 0;
@@ -145,24 +151,15 @@ function draw() {
 		var headRadius = 10;
 		var handLength = 15;
 
+		var animFrame = 0;
+		if(0 < person.cooldown)
+			animFrame = Math.max(0, Math.min(animImages.length-1, Math.floor(4 * (1. - person.cooldown / taskWait))));
+
+		ctx.drawImage(animImages[animFrame], pos[0] - 30, pos[1] - headHeight - 10);
+
 		ctx.font = "15px Arial";
 		ctx.fillStyle = color;
-		ctx.fillText(name, pos[0] - 5, pos[1] - headHeight + 5);
-
-		ctx.strokeStyle = color;
-		ctx.beginPath();
-		ctx.arc(pos[0], pos[1] - headHeight, headRadius, 0, 2*Math.PI);
-		ctx.moveTo(pos[0], pos[1] - headHeight + headRadius);
-		ctx.lineTo(pos[0], pos[1] - handLength);
-		ctx.moveTo(pos[0], pos[1] - headHeight + headRadius);
-		ctx.lineTo(pos[0] - handLength, pos[1] - headHeight + headRadius + handLength);
-		ctx.moveTo(pos[0], pos[1] - headHeight + headRadius);
-		ctx.lineTo(pos[0] + handLength, pos[1] - headHeight + headRadius + handLength);
-		ctx.moveTo(pos[0], pos[1] - handLength);
-		ctx.lineTo(pos[0] - handLength, pos[1]);
-		ctx.moveTo(pos[0], pos[1] - handLength);
-		ctx.lineTo(pos[0] + handLength, pos[1]);
-		ctx.stroke();
+		ctx.fillText(name, pos[0] - 5, pos[1] - headHeight - 10);
 
 		for(var i = 0; i < person.balls.length; i++)
 			drawBall(person.balls[i]);
@@ -181,19 +178,19 @@ function draw() {
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
 	}
 
+	var ballRadius = 5;
 	var offset = 100;
 
 	ctx.clearRect(0,0,width,height);
 	ctx.setTransform(1,0,0,1, offset, 0);
 
-	var ballRadius = 5;
+	// Draw people (represents threads)
+	for(var i = 0; i < people.length; i++)
+		drawPerson(people[i]);
+
 	for(var i = 0; i < balls.length; i++){
 		drawBall(balls[i]);
 	}
-
-	// Draw person A (on fixed frame of reference)
-	for(var i = 0; i < people.length; i++)
-		drawPerson(people[i]);
 
 	setIdentity();
 }
