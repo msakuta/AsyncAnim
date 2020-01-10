@@ -57,7 +57,7 @@ for(var i = 0; i < 10; i++){
 		pos: [target.pos[0], target.pos[1] + Math.random() * 200],
 		velo: [0, -15 * Math.random()],
 		owner: target,
-		color: `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
+		color: "rgb(" + (Math.random() * 255) + ", " + (Math.random() * 255) + ", " + (Math.random() * 255) + ")"
 	});
 }
 
